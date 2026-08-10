@@ -11,6 +11,7 @@ import dev.amenhancer.module.config.TargetConfigClient
  */
 internal data class TargetAdaptation(
     val identity: String,
+    val currentSong: CurrentSongIdentityCache = CurrentSongIdentityCache(),
     val dualPane: DualPaneTarget,
     val editorialVideo: EditorialVideoTarget,
     val bidirectionalLyricBlur: BidirectionalLyricBlurTarget,
@@ -29,28 +30,31 @@ internal data class TargetAdaptation(
             config: TargetConfigClient,
             application: Application,
             classLoader: ClassLoader,
-            lyricsTypefaceSession: LyricsTypefaceSession? = null,
+            lyricsTypefaceSession: LyricsTypefaceSession,
+            currentSong: CurrentSongIdentityCache = CurrentSongIdentityCache(),
+            registerCurrentSongResponder: Boolean = true,
         ): TargetAdaptation {
             val build = targetBuild(application)
             val resolver = IndexedTargetSymbolResolver(
                 build = build,
                 source = ApkTargetClassSource(application, classLoader),
             )
-            val currentSong = CurrentSongIdentityCache()
             return TargetAdaptation(
                 identity = build.displayName,
+                currentSong = currentSong,
                 dualPane = AppleMusicDualPaneTarget(resolver),
                 editorialVideo = AppleMusicEditorialVideoTarget(application, resolver),
                 bidirectionalLyricBlur = AppleMusicBidirectionalLyricBlurTarget(resolver),
                 lyricsTypeface = AppleMusicLyricsTypefaceTarget(
                     symbols = resolver,
-                    session = lyricsTypefaceSession ?: LyricsTypefaceSession(),
+                    session = lyricsTypefaceSession,
                 ),
                 customLyrics = AppleMusicCustomLyricsTarget(config, resolver, currentSong),
                 currentSongIdentity = AppleMusicCurrentSongIdentityTarget(
                     application,
                     resolver,
                     currentSong,
+                    registerCurrentSongResponder,
                 ),
             )
         }

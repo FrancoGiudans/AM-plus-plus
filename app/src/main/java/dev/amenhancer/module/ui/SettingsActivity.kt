@@ -130,7 +130,7 @@ class SettingsActivity : Activity() {
         super.onSaveInstanceState(outState)
     }
 
-    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "GestureBackNavigation")
     override fun onBackPressed() {
         if (currentPage == SettingsPage.CUSTOM_LYRICS) {
             showPage(SettingsPage.MAIN)
